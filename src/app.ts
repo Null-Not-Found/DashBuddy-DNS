@@ -1,3 +1,4 @@
+import { error } from 'console';
 import express, { Application, Request, Response } from 'express';
 
 const app: Application = express();
@@ -12,17 +13,21 @@ let microserviceArray: string[] = [];
 
 const timerPing = setInterval(async function() {
     console.log("Starting Ping")
+    let count = 0
     IPArray.forEach(function(value){
         let response = fetch(value , {
             method: 'GET',
-        });
+        }).catch(error => {
+            IPArray.splice(count,1);
+            microserviceArray.splice(count,1);
+        })
         if (response == undefined){
-            var index = IPArray.indexOf(value);
-            IPArray.splice(index,1);
-            microserviceArray.splice(index,1);
+            
         };
         console.log(value)
+        count++;
     })
+    count = 0;
     console.log("Ending ping")
 }, 5*1000);
 
@@ -36,6 +41,22 @@ app.post('/register', (req: Request, res: Response): void => {
     IPArray.push(IP);
     microserviceArray.push(microservice);
     res.status(200).send("Registered")
+});
+
+app.get('/get/:microservice', async (req: Request, res: Response) => {
+    const nameToFind = req.params.microservice;
+    const locations = microserviceArray
+        .map((value, index) => value === nameToFind ? index : -1)
+        .filter(index => index !== -1);
+    
+    const randomIndex = Math.floor(Math.random() * locations.length);
+    const randomElement = locations[randomIndex];
+    let IP = IPArray.at(randomElement)
+    
+    res.status(200).json({
+		"Time": new Date().toUTCString(),
+		"data": IP
+	});
 });
 
 app.listen(PORT, (): void => {
