@@ -15,7 +15,7 @@ const timerPing = setInterval(async function() {
     console.log("Starting Ping")
     let count = 0
     IPArray.forEach(function(value){
-        let response = fetch(value , {
+        let response = fetch(value + "/ping", {
             method: 'GET',
         }).catch(error => {
             IPArray.splice(count,1);
@@ -37,7 +37,7 @@ app.post('/register', (req: Request, res: Response): void => {
     let microservice: string = req.body.microservice;
     let port: string = req.body.port
     IP = IP.replace(/^::ffff:/, '');
-    IP = "http://" + IP + ":" + port + "/ping"
+    IP = "http://" + IP + ":" + port
     IPArray.push(IP);
     microserviceArray.push(microservice);
     res.status(200).send("Registered")
