@@ -1,4 +1,3 @@
-import { error } from 'console';
 import express, { Application, Request, Response } from 'express';
 
 const app: Application = express();
@@ -18,6 +17,7 @@ const timerPing = setInterval(async function() {
         let response = fetch(value + "/ping", {
             method: 'GET',
         }).catch(error => {
+            console.log(error);
             IPArray.splice(count,1);
             microserviceArray.splice(count,1);
         })
