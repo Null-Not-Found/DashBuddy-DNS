@@ -1,4 +1,3 @@
-import { error } from 'console';
 import express, { Application, Request, Response } from 'express';
 
 const app: Application = express();
@@ -11,19 +10,17 @@ app.use(bodyparser.json())
 let IPArray: string[] = [];
 let microserviceArray: string[] = [];
 
-const timerPing = setInterval(async function() {
+setInterval(async function() {
     console.log("Starting Ping")
     let count = 0
     IPArray.forEach(function(value){
-        let response = fetch(value + "/ping", {
+        fetch(value + "/ping", {
             method: 'GET',
         }).catch(error => {
+            console.log(error);
             IPArray.splice(count,1);
             microserviceArray.splice(count,1);
         })
-        if (response == undefined){
-            
-        };
         console.log(value)
         count++;
     })
